@@ -1,0 +1,199 @@
+//
+//  ViewController.m
+//  Phoenix Game
+//
+//  Created by Alex Mcritchie on 4/6/14.
+//  Copyright (c) 2014 Alex Mcritchie. All rights reserved.
+//
+
+#import "ViewController.h"
+
+@interface ViewController ()
+
+@end
+
+@implementation ViewController
+
+//Background//
+-(void)BackgroundMovement{
+    
+    //Mback1.center = CGPointMake(Mback1.center.x, Mback1.center.y + Yback1);
+    Mback2.center = CGPointMake(Mback2.center.x, Mback2.center.y + Yback1);
+    //Yback1 = .1;
+    
+}
+
+-(IBAction)Start:(id)sender{
+    
+    Intro1.hidden = YES;
+    Intro2.hidden = YES;
+    Intro3.hidden = YES;
+    
+    timer = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(Movement) userInfo:nil repeats:YES];
+
+    Start.hidden = YES;
+    Shoot.hidden = NO;
+    
+    UIImageView *img = [[UIImageView alloc] initWithFrame: CGRectMake(100, 200, 20, 20)];
+    img.image = [UIImage imageNamed:@"Badguy1.png"];
+    [self.view addSubview: img];
+    
+    //Badguy1R1.hidden = NO;
+    //Badguy1R1.center = CGPointMake(300, -100);
+
+}
+
+-(IBAction)Shoot:(id)sender{
+    Bullet.hidden = NO;
+    Bullet.center = CGPointMake(Bullet.center.x, 250);
+    BulletsOnScreen = BulletsOnScreen + 1;
+}
+
+-(void)Movement{
+    
+    [self Collision];
+
+    Bullet.center = CGPointMake(Bullet.center.x, Bullet.center.y - 1);
+    
+}
+
+//Pause Menu//
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    
+    UITouch *touch = [touches anyObject];
+    CGPoint point = [touch locationInView:self.view];
+    
+    if (point.x > 10  ) {
+        Xship = -7;
+    }
+    else {
+        Xship = 7;
+    }
+}
+
+-(void)Collision{
+    
+//if(CGRectIntersectsRect(Ship.frame,Badguy1R1.frame)){
+        
+        [self EndGame];
+}
+
+-(void)EndGame{
+    
+    Ship.hidden = YES;
+    [timer invalidate];
+    Shoot.hidden = YES;
+    
+    [self performSelector:@selector(NewGame) withObject: nil afterDelay:2];
+    
+}
+
+-(void)NewGame{
+    
+//Badguy1R1.hidden = YES;
+    
+    Intro1.hidden = NO;
+    Intro2.hidden = NO;
+    Intro3.hidden = NO;
+    
+    Ship.hidden = NO;
+    Ship.center = CGPointMake(320, 290);
+    
+    Start.hidden = NO;
+}
+
+//Controller Actions//
+//------Left-------//
+-(IBAction)MoveLeft:(id)sender{
+    goLeft = [NSTimer scheduledTimerWithTimeInterval:0.0005 target:self selector:@selector(goLeft) userInfo:nil repeats:YES];
+    if ( goLeft == nil){
+        goLeft = [NSTimer scheduledTimerWithTimeInterval:0.0005 target:self selector:@selector(goLeft) userInfo:nil repeats:YES];
+    }
+}
+-(IBAction)StopLeft:(id)sender {
+    [goLeft invalidate];
+    goLeft = nil;
+}
+-(void)goLeft{
+    if (Ship.center.x < 140){
+        Ship.center = CGPointMake(Ship.center.x, Ship.center.y);
+    }else{
+        Ship.center = CGPointMake(Ship.center.x - 1, Ship.center.y);
+    }
+}
+//------Right------//
+-(IBAction)MoveRight:(id)sender{
+    goRight = [NSTimer scheduledTimerWithTimeInterval:0.0005 target:self selector:@selector(goRight) userInfo:nil repeats:YES];
+    if ( goRight == nil){
+        goRight = [NSTimer scheduledTimerWithTimeInterval:0.0005 target:self selector:@selector(goRight) userInfo:nil repeats:YES];
+    }
+}
+-(IBAction)StopRight:(id)sender {
+    [goRight invalidate];
+    goRight = nil;
+}
+-(void)goRight{
+    if (Ship.center.x > 460){
+        Ship.center = CGPointMake(Ship.center.x, Ship.center.y);
+    }else{
+        Ship.center = CGPointMake(Ship.center.x + 1, Ship.center.y);
+    }
+}
+//-------Up-------//
+-(IBAction)MoveUp:(id)sender{
+    goUp = [NSTimer scheduledTimerWithTimeInterval:0.0005 target:self selector:@selector(goUp) userInfo:nil repeats:YES];
+    if ( goUp == nil){
+        goUp = [NSTimer scheduledTimerWithTimeInterval:0.0005 target:self selector:@selector(goUp) userInfo:nil repeats:YES];
+    }
+}
+-(IBAction)StopUp:(id)sender {
+    [goUp invalidate];
+    goUp = nil;
+}
+-(void)goUp{
+    if (Ship.center.y < 20){
+        Ship.center = CGPointMake(Ship.center.x, Ship.center.y);
+    }else{
+        Ship.center = CGPointMake(Ship.center.x, Ship.center.y - 1);
+    }
+}
+//------Down------//
+-(IBAction)MoveDown:(id)sender{
+    goDown = [NSTimer scheduledTimerWithTimeInterval:0.0005 target:self selector:@selector(goDown) userInfo:nil repeats:YES];
+    if ( goDown == nil){
+        goDown = [NSTimer scheduledTimerWithTimeInterval:0.0005 target:self selector:@selector(goDown) userInfo:nil repeats:YES];
+    }
+}
+-(IBAction)StopDown:(id)sender {
+    [goDown invalidate];
+    goDown = nil;
+}
+-(void)goDown{
+    if (Ship.center.y > 290){
+        Ship.center = CGPointMake(Ship.center.x, Ship.center.y);
+    }else{
+        Ship.center = CGPointMake(Ship.center.x, Ship.center.y + 1);
+    }
+}
+//Controller Actions
+
+
+- (void)viewDidLoad{
+    
+    Start.hidden = NO;
+    Shoot.hidden = YES;
+    timerBackground = [NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(BackgroundMovement) userInfo:nil repeats:YES];
+//Badguy1R1.hidden = YES;
+    Bullet.hidden = YES;
+    Shoot.hidden = NO;
+    
+    
+    [super viewDidLoad];
+	// Do any additional setup after loading the view, typically from a nib.
+    
+}
+
+
+//
+
+@end
